@@ -187,3 +187,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+
+# Map files
+data/maps/*.json
+data/maps/*.json.download
+

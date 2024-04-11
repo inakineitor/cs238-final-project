@@ -1,6 +1,8 @@
 import requests
 from pathlib import Path
+import os
 
+from tqdm import tqdm
 from gerrychain import Graph
 
 
@@ -59,7 +61,7 @@ state_ids = {
 
 MAP_TYPES = ["BLOCK", "BG", "TRACT", "COUSUB", "COUNTY"]
 
-ALL_STATES = list(state_ids.keys())
+ALL_STATE_CODES = list(state_ids.keys())
 
 
 def get_map_link(state_code: str, map_type: str):
@@ -70,14 +72,36 @@ def get_map_link(state_code: str, map_type: str):
     return map_link
 
 
+def download_file_with_progress(url: str, destination_path: Path):
+    response = requests.get(url, stream=True)
+
+    # Sizes in bytes.
+    total_size = int(response.headers.get("content-length", 0))
+    block_size = 1024
+
+    temp_download_path = (
+        destination_path.parent / f"{destination_path.stem}.json.download"
+    )
+
+    with tqdm(total=total_size, unit="B", unit_scale=True) as progress_bar:
+        with open(temp_download_path, "wb") as file:
+            for data in response.iter_content(block_size):
+                progress_bar.update(len(data))
+                file.write(data)
+
+    if total_size != 0 and progress_bar.n != total_size:
+        raise RuntimeError("Could not download file")
+
+    os.rename(temp_download_path, destination_path)
+
+
 def download_map(state_code: str, map_type: str, cache_dir: Path) -> Path:
     cache_file_path = cache_dir / f"{state_code}_{map_type}.json"
     if cache_file_path.is_file():
         return cache_file_path
     map_link = get_map_link(state_code, map_type)
-    response = requests.get(map_link)
-    with open(cache_file_path, "w") as f:
-        f.write(response.text)
+    print(f"Downloading {map_type} map for {state_code}")
+    download_file_with_progress(map_link, cache_file_path)
     return cache_file_path
 
 
@@ -86,4 +110,10 @@ def load_map(state_code: str, map_type: str, cache_dir: Path) -> Graph:
     return Graph.from_json(str(file_path))
 
 
-print(load_map("WA", "TRACT", Path("test/")))
+def load_all_maps(cache_dir: Path) -> dict[str, dict[str, Graph]]:
+    result = dict()
+    for map_type in MAP_TYPES:
+        result[map_type] = dict()
+        for state_code in ALL_STATE_CODES:
+            result[map_type][state_code] = load_map(state_code, map_type, cache_dir)
+    return result
