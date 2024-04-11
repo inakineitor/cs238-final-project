@@ -59,7 +59,14 @@ state_ids = {
     "WY": "56",
 }
 
-MAP_TYPES = ["BLOCK", "BG", "TRACT", "COUSUB", "COUNTY"]
+# NOTE: You must re-enable the big map formats for them to be downloaded and loaded together with the other maps
+MAP_TYPES = [
+    # "BLOCK",
+    # "BG",
+    # "TRACT",
+    # "COUSUB",
+    "COUNTY",
+]
 
 ALL_STATE_CODES = list(state_ids.keys())
 
@@ -96,7 +103,7 @@ def download_file_with_progress(url: str, destination_path: Path):
 
 
 def download_map(state_code: str, map_type: str, cache_dir: Path) -> Path:
-    cache_file_path = cache_dir / f"{state_code}_{map_type}.json"
+    cache_file_path = cache_dir / f"{map_type}_{state_code}.json"
     if cache_file_path.is_file():
         return cache_file_path
     map_link = get_map_link(state_code, map_type)
