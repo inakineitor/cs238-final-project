@@ -5,4 +5,4 @@ from ..benchmark_framework.benchmark import Benchmark
 
 class RadiusBenchmark(Benchmark):
     def score_graph(self, graph) -> float:
-       return nx.radius(graph) # NOTE - This won't work for connected graphs
+       return nx.radius(graph) # NOTE - This won't work for non-connected graphs
