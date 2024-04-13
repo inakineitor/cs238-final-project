@@ -16,7 +16,7 @@ SEED = 238  # INFO: Seed to ensure reproducible results
 def main():
     models_to_test = [
         real_life_maps.RealLifeMaps(Path("../data/maps")),
-        triangle_deletion.TriangleDeletionModel(),
+        triangle_deletion.TriangleDeletionModel(probability=0.1, num_pts=100),
         # TODO: Add more models
     ]
     benchmarks_to_run = [
