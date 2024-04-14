@@ -61,10 +61,10 @@ state_ids = {
 
 # NOTE: You must re-enable the big map formats for them to be downloaded and loaded together with the other maps
 MAP_TYPES = [
-    # "BLOCK",
-    # "BG",
-    # "TRACT",
-    # "COUSUB",
+    "BLOCK",
+    "BG",
+    "TRACT",
+    "COUSUB",
     "COUNTY",
 ]
 
