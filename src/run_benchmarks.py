@@ -3,7 +3,7 @@ from pathlib import Path
 from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
 )
-from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves
+from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity
 from map_analyzer.models import real_life_maps, triangle_deletion
 
 
@@ -23,6 +23,8 @@ def main():
         maximum_degree.MaximumDegreeBenchmark(),
         radius.RadiusBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
+        diameter.DiameterBenchmark(),
+        assortativity.AssortativityBenchmark(),
         # TODO: Add more statistics from Linear
     ]
 
