@@ -3,15 +3,14 @@ from pathlib import Path
 from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
 )
-from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves
+from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity
 from map_analyzer.maps.load_maps import load_all_maps, state_ids, load_map
 
 
 def main():
-    state_names_to_load = ["WA", "MA"]
-    # state_names_to_load = list(state_ids.values()) # If you want to load all
-    # state_codes_to_load = [state_ids[state_name] for state_name in state_names_to_load]
-    map_type = "TRACT"
+    # state_names_to_load = ["WA", "MA"] # if you want to load specific states only
+    state_names_to_load = list(state_ids.keys()) # If you want to load all
+    map_type = "BLOCK"
     loaded_maps = [
         load_map(state_code, map_type, Path("../data/maps"))
         for state_code in state_names_to_load
@@ -22,6 +21,8 @@ def main():
         maximum_degree.MaximumDegreeBenchmark(),
         radius.RadiusBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
+        diameter.DiameterBenchmark(),
+        assortativity.AssortativityBenchmark(),
         # TODO: Add more statistics
     ]
 
