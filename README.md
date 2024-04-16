@@ -6,3 +6,5 @@ If you use conda, it will be useful to run:
 ```
 conda env create -f 238_env.yml
 ```
+
+Run things in src folder.
