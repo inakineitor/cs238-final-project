@@ -22,9 +22,9 @@ def main():
 
     benchmarks_to_run = [
         maximum_degree.MaximumDegreeBenchmark(),
-        radius.RadiusBenchmark(),
+        # radius.RadiusBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
-        diameter.DiameterBenchmark(),
+        # diameter.DiameterBenchmark(),
         assortativity.AssortativityBenchmark(),
         average_degree.AverageDegreeBenchmark(),
         clustering_coefficient.ClusteringCoefficientBenchmark(),

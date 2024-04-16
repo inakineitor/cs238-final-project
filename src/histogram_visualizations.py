@@ -3,8 +3,8 @@ import json
 import matplotlib.pyplot as plt
 
 def main():
-    # ["BLOCK"]
-    for map_type in ["BG", "TRACT", "COUSUB", "COUNTY"]:
+    # ["BG", "TRACT", "COUSUB", "COUNTY"]
+    for map_type in ["BLOCK"]:
         # Read the JSON file
         with open(f"do_not_commit/{map_type}_main_stats.json") as f:
             data = json.load(f)
