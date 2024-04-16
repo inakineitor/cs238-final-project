@@ -3,10 +3,10 @@ import json
 import matplotlib.pyplot as plt
 
 def main():
-    # ["BLOCK", "BG", "TRACT", "COUSUB", "COUNTY"]
-    for map_type in ["BLOCK"]:
+    # ["BLOCK"]
+    for map_type in ["BG", "TRACT", "COUSUB", "COUNTY"]:
         # Read the JSON file
-        with open(f"{map_type}_main_stats.json") as f:
+        with open(f"do_not_commit/{map_type}_main_stats.json") as f:
             data = json.load(f)
 
         # key = benchmark name, value = list of values from all states, one value per state

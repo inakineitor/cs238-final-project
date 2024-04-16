@@ -3,7 +3,7 @@ from pathlib import Path
 from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
 )
-from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity
+from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity, average_degree, clustering_coefficient
 from map_analyzer.maps.load_maps import load_all_maps, state_ids, load_map
 from collections import defaultdict
 import json
@@ -26,7 +26,8 @@ def main():
         number_of_leaves.NumberOfLeavesBenchmark(),
         diameter.DiameterBenchmark(),
         assortativity.AssortativityBenchmark(),
-        # TODO: Add more statistics
+        average_degree.AverageDegreeBenchmark(),
+        clustering_coefficient.ClusteringCoefficientBenchmark(),
     ]
 
     overall_results = defaultdict(list)
@@ -40,7 +41,7 @@ def main():
             print(benchmark_results)
             overall_results[benchmark_name].append(benchmark_results[0]) # these benchmarks all generate one number per graph
 
-    with open(f"{map_type}_main_stats.json", 'w') as fp:
+    with open(f"do_not_commit/{map_type}_main_stats.json", 'w') as fp:
         json.dump(overall_results, fp)
         print('dictionary saved successfully to file')
 
