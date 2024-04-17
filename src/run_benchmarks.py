@@ -3,7 +3,7 @@ from pathlib import Path
 from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
 )
-from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity
+from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity, average_degree, clustering_coefficient
 from map_analyzer.models import real_life_maps, triangle_deletion
 
 
@@ -15,17 +15,19 @@ SEED = 238  # INFO: Seed to ensure reproducible results
 
 def main():
     models_to_test = [
-        real_life_maps.RealLifeMaps(Path("../data/maps")),
-        triangle_deletion.TriangleDeletionModel(probability=0.1, num_pts=100),
+        # real_life_maps.RealLifeMaps(Path("../data/maps")),
+        triangle_deletion.TriangleDeletionModel(probability=0.1, num_pts=1000),
         # TODO: Add more models
     ]
+
     benchmarks_to_run = [
         maximum_degree.MaximumDegreeBenchmark(),
         radius.RadiusBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
         diameter.DiameterBenchmark(),
         assortativity.AssortativityBenchmark(),
-        # TODO: Add more statistics from Linear
+        average_degree.AverageDegreeBenchmark(),
+        clustering_coefficient.ClusteringCoefficientBenchmark(),
     ]
 
     orchestrator = BenchmarkOrchestrator(benchmarks_to_run)
