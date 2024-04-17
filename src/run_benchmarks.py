@@ -18,7 +18,7 @@ def main():
     models_to_test = [
         # real_life_maps.RealLifeMaps(Path("../data/maps")), # for sampling real-life maps
         # triangle_deletion.TriangleDeletionModel(probability=0.2, num_pts=1000),
-        triangle_edge_deletion.TriangleEdgeDeletionModel(probability=0.15, num_pts=1000),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(probability=0.1, num_pts=1000),
         # TODO: Add more models
     ]
 
