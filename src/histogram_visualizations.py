@@ -19,7 +19,7 @@ def main():
             else:
                 plt.hist(all_values)
             plt.title(benchmark_name)
-            plt.savefig(f"../data/histograms/{benchmark_name}_{map_type}_realmaps.png")
+            plt.savefig(f"../data/histograms/{map_type}_{benchmark_name}_realmaps.png")
             plt.close()
 
 if __name__ == "__main__":
