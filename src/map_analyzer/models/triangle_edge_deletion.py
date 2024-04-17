@@ -21,8 +21,8 @@ class TriangleEdgeDeletionModel(GraphGeneratingModel):
 
     def generate_graph(self, seed=None) -> Graph:
         # Create Delaunay Configuration
-        # TODO: add rng seed like in real_life_maps.py?
-        points = np.random.rand(self.n, 2)
+        rng = np.random.default_rng(seed)
+        points = rng.random((self.n, 2))
         tri = Delaunay(points)
         
         edited_p = {} # maps vertices to edited (higher) probabilities of edge removals
@@ -36,7 +36,7 @@ class TriangleEdgeDeletionModel(GraphGeneratingModel):
                 
             for t in tups:
                 a, b = t
-                if np.random.rand() <= max(edited_p.get(a, self.p_delete), edited_p.get(b, self.p_delete)):
+                if rng.random() <= max(edited_p.get(a, self.p_delete), edited_p.get(b, self.p_delete)):
                     edited_p[a] = edited_p.get(a, self.p_delete) + self.p_delete
                     edited_p[b] = edited_p.get(b, self.p_delete) + self.p_delete
                     continue

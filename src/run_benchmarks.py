@@ -4,7 +4,7 @@ from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
 )
 from map_analyzer.benchmarks import maximum_degree, radius, number_of_leaves, diameter, assortativity, average_degree, clustering_coefficient
-from map_analyzer.models import real_life_maps, triangle_deletion, triangle_edge_deletion
+from map_analyzer.models import real_life_maps, triangle_edge_deletion
 
 
 NUM_ITERS = (
@@ -17,7 +17,6 @@ SEED = 238  # INFO: Seed to ensure reproducible results
 def main():
     models_to_test = [
         # real_life_maps.RealLifeMaps(Path("../data/maps")), # for sampling real-life maps
-        # triangle_deletion.TriangleDeletionModel(probability=0.2, num_pts=1000),
         triangle_edge_deletion.TriangleEdgeDeletionModel(probability=0.1, num_pts=1000),
         # TODO: Add more models
     ]
