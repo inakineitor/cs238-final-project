@@ -21,7 +21,7 @@ class TriangleDeletionModel(GraphGeneratingModel):
 
     def generate_graph(self, seed=None) -> Graph:
         graph = nx.Graph()
-        graph.add_node(1)
+        # graph.add_node(1)
         
         # Create Delaunay Configuration
         points = np.random.rand(self.n, 2)
