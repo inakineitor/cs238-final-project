@@ -21,8 +21,7 @@ class BottomUpModel(GraphGeneratingModel):
 
     def generate_graph(n, m, k):
         og = nx.grid_graph([n, m])
-        
-        return 
+        return random_flood_fill(og, k)
 
     def random_flood_fill(graph, num_floods):
         nodes = list(graph.nodes())
