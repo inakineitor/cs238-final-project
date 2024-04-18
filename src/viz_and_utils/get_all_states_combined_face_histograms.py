@@ -15,6 +15,7 @@ def plot_and_save_and_show(title, file_path):
 
     # Process each state's data
     for index, (state, (length, array_A)) in enumerate(data.items()):
+        # NOTE: these histograms potentially include the external face, which could have many sides
         first_15_elements = array_A[:15]
         
         # Plot with standard scale

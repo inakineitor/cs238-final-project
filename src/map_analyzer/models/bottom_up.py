@@ -18,12 +18,7 @@ class BottomUpModel(GraphGeneratingModel):
         self.p_delete = probability
         self.n = num_pts
 
-
-    def generate_graph(n, m, k):
-        og = nx.grid_graph([n, m])
-        return random_flood_fill(og, k)
-
-    def random_flood_fill(graph, num_floods):
+    def random_flood_fill(self, graph, num_floods):
         nodes = list(graph.nodes())
         boundary_nodes = set(graph.nodes_boundary())
         for _ in range(num_floods):
@@ -40,6 +35,11 @@ class BottomUpModel(GraphGeneratingModel):
             for node in visited:
                 graph.remove_node(node)
         return graph
+    
+
+    def generate_graph(self, n, m, k):
+        og = nx.grid_graph([n, m])
+        return self.random_flood_fill(og, k)
     
 
 
