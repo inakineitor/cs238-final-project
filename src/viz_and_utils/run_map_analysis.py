@@ -13,7 +13,7 @@ def main():
     # state_names_to_load = ["WA", "MA"] # if you want to load specific states only
     state_names_to_load = list(state_ids.keys()) # If you want to load all
     # map types are ["BLOCK", "BG", "TRACT", "COUSUB", "COUNTY"]
-    map_type = "BLOCK"
+    map_type = "TRACT"
     loaded_maps = [
         load_map(state_code, map_type, Path("../data/maps"))
         for state_code in state_names_to_load
@@ -22,9 +22,9 @@ def main():
 
     benchmarks_to_run = [
         maximum_degree.MaximumDegreeBenchmark(),
-        # radius.RadiusBenchmark(),
+        radius.RadiusBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
-        # diameter.DiameterBenchmark(),
+        diameter.DiameterBenchmark(),
         assortativity.AssortativityBenchmark(),
         average_degree.AverageDegreeBenchmark(),
         clustering_coefficient.ClusteringCoefficientBenchmark(),

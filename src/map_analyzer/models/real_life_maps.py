@@ -12,7 +12,7 @@ class RealLifeMaps(GraphGeneratingModel):
     def __init__(self, cache_dir: Path):
         self.all_maps = load_all_maps(cache_dir)
 
-    def generate_graph(self, seed=None) -> Graph:
+    def generate_graph(self, seed=None, param_dict=None) -> Graph:
         # WARN: This picks any category at random.
         # TODO: Depending on the implementation of our experiments, we should probably restrict to a single category or merge map types
         rng = np.random.default_rng(seed)
