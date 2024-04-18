@@ -78,11 +78,11 @@ def main():
                 print(f"Proportion of disconnected graphs: {num_disconnected}/{len(benchmark_results.all_vals)}")
             elif benchmark_name == "FaceIfPlanar":
                 values = [x for x in benchmark_results.all_vals if x != -1] # -1 encodes non-planar
-                num_disconnected = benchmark_results.all_vals.count(-1)
+                num_nonplanar = benchmark_results.all_vals.count(-1)
                 print("minimum: ", min(values))
                 print("mean: ", sum(values) / len(values))
                 print("maximum: ", max(values))
-                print(f"Proportion of non-planar graphs: {num_disconnected}/{len(benchmark_results.all_vals)}")
+                print(f"Proportion of non-planar graphs: {num_nonplanar}/{len(benchmark_results.all_vals)}")
             else:
                 for key in ["minimum", "mean", "maximum"]:
                     print(f"{key}: {benchmark_results.__getattribute__(key)}")
