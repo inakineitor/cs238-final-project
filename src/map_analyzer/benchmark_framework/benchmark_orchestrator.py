@@ -43,12 +43,13 @@ class BenchmarkOrchestrator:
         return BenchmarkOrchestratorResults(benchmarks=benchmark_outputs)
 
     def benchmark_model(
-        self, model: GraphGeneratingModel, num_iters: int, seed: int
+        self, model: GraphGeneratingModel, num_iters: int, seed: int, extra_params=None
     ) -> BenchmarkOrchestratorResults:
-        graphs = model.generate_graphs(num_iters, seed)
-        return self.benchmark_graphs(graphs)
-
-    def benchmark_models(
-        self, models: list[GraphGeneratingModel], num_iters: int, seed: int
-    ) -> list[BenchmarkOrchestratorResults]:
-        return [self.benchmark_model(model, num_iters, seed) for model in models]
+        graphs = model.generate_graphs(num_iters, seed, opt_params=extra_params)
+        num_vertices = [g.number_of_nodes() for g in graphs]
+        return num_vertices, self.benchmark_graphs(graphs)
+    
+    # def benchmark_models(
+    #     self, models: list[GraphGeneratingModel], num_iters: int, seed: int
+    # ) -> list[BenchmarkOrchestratorResults]:
+    #     return [self.benchmark_model(model, num_iters, seed) for model in models]
