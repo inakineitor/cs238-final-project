@@ -28,6 +28,13 @@ class GraphGeneratingModel(ABC):
                     params["n"] = opt_params["num_vertices"][i]
                     returnres.append(self.generate_graph(seed=rng, param_dict=params))
                 return returnres
+            if opt_params["model"] == "waxman":  # triangle deletion model
+                for i in range(num_graphs):
+                    params = {}
+                    # params["p_delete"] = opt_params["p_delete"]
+                    params["n"] = opt_params["num_vertices"][i]
+                    returnres.append(self.generate_graph(seed=rng, param_dict=params))
+                return returnres
         else:  # real life graphs
             return [
                 self.generate_graph(seed=rng, param_dict=opt_params)

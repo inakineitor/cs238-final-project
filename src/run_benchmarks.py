@@ -68,6 +68,15 @@ def main():
             print(nvert)
             print(num_vertices)
             benchmark_orchestrator_results.append(graph_nodes)
+        if i == 3:  # waxman
+            params = {"num_vertices": num_vertices, "model": "waxman"}
+            nvert, graph_nodes = orchestrator.benchmark_model(
+                models_to_test[i], NUM_ITERS, SEED, extra_params=params
+            )
+
+            print(nvert)
+            print(num_vertices)
+            benchmark_orchestrator_results.append(graph_nodes)
 
     # benchmark_orchestrator_results = orchestrator.benchmark_models(
     #     models_to_test, NUM_ITERS, SEED
