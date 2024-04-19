@@ -8,14 +8,10 @@ from scipy.spatial import Delaunay
 
 
 class TriangleEdgeDeletionModel(GraphGeneratingModel):
-    def __init__(self, name="TriangleDeletion"):
+    def __init__(self):
         """
         Constructor for this model.
-
-        Args:
-            probability (float): prob of deleting A SINGLE EDGE from Delaunay tesselation.
         """
-        self.name = name
 
     def generate_graph(self, seed=None, param_dict=None) -> Graph:
 
