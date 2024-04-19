@@ -48,7 +48,7 @@ class BenchmarkOrchestrator:
         graphs = model.generate_graphs(num_iters, seed, opt_params=extra_params)
         num_vertices = [g.number_of_nodes() for g in graphs]
         return num_vertices, self.benchmark_graphs(graphs)
-    
+
     # def benchmark_models(
     #     self, models: list[GraphGeneratingModel], num_iters: int, seed: int
     # ) -> list[BenchmarkOrchestratorResults]:

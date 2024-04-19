@@ -12,18 +12,24 @@ class GraphGeneratingModel(ABC):
         pass
 
     def generate_graphs(
-        self, num_graphs: int, seed: Optional[int] = None, opt_params: Optional[dict[str, Any]] = None
+        self,
+        num_graphs: int,
+        seed: Optional[int] = None,
+        opt_params: Optional[dict[str, Any]] = None,
     ) -> list[Graph]:
         rng = np.random.default_rng(seed)
 
-        if opt_params: # indicates a null model
+        if opt_params:  # indicates a null model
             returnres = []
-            if opt_params['model'] == 'tri': # triangle deletion model
+            if opt_params["model"] == "tri":  # triangle deletion model
                 for i in range(num_graphs):
                     params = {}
-                    params['p_delete'] = opt_params['p_delete']
-                    params['n'] = opt_params['num_vertices'][i]
+                    params["p_delete"] = opt_params["p_delete"]
+                    params["n"] = opt_params["num_vertices"][i]
                     returnres.append(self.generate_graph(seed=rng, param_dict=params))
                 return returnres
-        else: # real life graphs
-            return [self.generate_graph(seed=rng, param_dict=opt_params) for _ in range(num_graphs)]
+        else:  # real life graphs
+            return [
+                self.generate_graph(seed=rng, param_dict=opt_params)
+                for _ in range(num_graphs)
+            ]
