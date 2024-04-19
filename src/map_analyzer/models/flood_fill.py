@@ -2,6 +2,7 @@ from gerrychain import Graph
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
+from random import choice
 
 from .graph_generating_model import GraphGeneratingModel
 
@@ -28,7 +29,8 @@ class FloodFillModel(GraphGeneratingModel):
 
         num_walkers = num_points  # number of walkers
 
-        grid = nx.grid_graph([self.graph_width, self.graph_height])
+        # grid = nx.grid_graph([self.graph_width, self.graph_height]) # TODO: Update this with message passing
+        grid = nx.grid_graph([num_points, num_points])
 
         unassigned = list(grid.nodes())
 
@@ -37,7 +39,7 @@ class FloodFillModel(GraphGeneratingModel):
         cdict = {x: 0 for x in grid.nodes()}
 
         for i in range(num_walkers):
-            walker_starting_position = rng.choice(unassigned)
+            walker_starting_position = tuple(rng.choice(unassigned))
             walkers.append(walker_starting_position)
             unassigned.remove(walker_starting_position)
             cdict[walker_starting_position] = i + 1
@@ -62,7 +64,7 @@ class FloodFillModel(GraphGeneratingModel):
 
             for i in order:
                 old = walkers[i]
-                walkers[i] = rng.choice(list(grid.neighbors(walkers[i])))
+                walkers[i] = tuple(rng.choice(list(grid.neighbors(walkers[i]))))
                 if walkers[i] in unassigned:
                     unassigned.remove(walkers[i])
                     cdict[walkers[i]] = i + 1

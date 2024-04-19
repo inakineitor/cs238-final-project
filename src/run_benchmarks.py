@@ -59,7 +59,7 @@ def main():
 
     # Run all other benchmarks
     for i in range(1, len(models_to_test)):
-        if i == 1:  # triangle deletion
+        if i >= 1:  # triangle deletion
             params = {"num_vertices": num_vertices, "p_delete": 0.065, "model": "tri"}
             nvert, graph_nodes = orchestrator.benchmark_model(
                 models_to_test[i], NUM_ITERS, SEED, extra_params=params
