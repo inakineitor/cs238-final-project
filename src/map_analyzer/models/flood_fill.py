@@ -13,10 +13,12 @@ class FloodFillModel(GraphGeneratingModel):
     graph_width: int
     graph_height: int
 
-    def __init__(self):
+    def __init__(self, graph_width=20, graph_height=20):
         """
         Constructor for the FloodFillModel.
         """
+        self.graph_width = graph_width
+        self.graph_height = graph_height
 
     def generate_graph(self, seed=None, param_dict=None) -> Graph:
 
@@ -24,11 +26,9 @@ class FloodFillModel(GraphGeneratingModel):
 
         rng = np.random.default_rng(seed)
 
-        graph_width = 20  # grid size
-        graph_height = 20  # grid size
         num_walkers = num_points  # number of walkers
 
-        grid = nx.grid_graph([graph_width, graph_height])
+        grid = nx.grid_graph([self.graph_width, self.graph_height])
 
         unassigned = list(grid.nodes())
 
@@ -86,7 +86,7 @@ class FloodFillModel(GraphGeneratingModel):
             plt.show()
 
         if DISPLAY_PLOTS:
-            grid2 = nx.grid_graph([graph_width, graph_height])
+            grid2 = nx.grid_graph([self.graph_width, self.graph_height])
             print(grid2)
             plt.figure()
             nx.draw(

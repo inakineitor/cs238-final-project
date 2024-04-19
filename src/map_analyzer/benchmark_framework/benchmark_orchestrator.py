@@ -1,33 +1,14 @@
 from dataclasses import dataclass
 
-import numpy as np
 from gerrychain import Graph
 
 from map_analyzer.models.graph_generating_model import GraphGeneratingModel
-from .benchmark import Benchmark
-
-
-@dataclass
-class BenchmarkResults:
-    minimum: float
-    mean: float
-    maximum: float
-    all_vals: list[float]
+from .benchmark import Benchmark, BenchmarkResults
 
 
 @dataclass
 class BenchmarkOrchestratorResults:
     benchmarks: list[BenchmarkResults]
-
-
-def run_single_benchmark(benchmark: Benchmark, graphs: list[Graph]) -> BenchmarkResults:
-    scores = benchmark.score_graphs(graphs)
-    return BenchmarkResults(
-        minimum=np.min(scores),
-        mean=float(np.mean(scores)),
-        maximum=np.max(scores),
-        all_vals=scores,
-    )
 
 
 class BenchmarkOrchestrator:
@@ -38,7 +19,7 @@ class BenchmarkOrchestrator:
 
     def benchmark_graphs(self, graphs: list[Graph]) -> BenchmarkOrchestratorResults:
         benchmark_outputs = [
-            run_single_benchmark(benchmark, graphs) for benchmark in self.benchmarks
+            benchmark.benchmark_graphs(graphs) for benchmark in self.benchmarks
         ]
         return BenchmarkOrchestratorResults(benchmarks=benchmark_outputs)
 

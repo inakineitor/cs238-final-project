@@ -19,3 +19,16 @@ class FaceIfPlanarBenchmark(Benchmark):
             return face_stats[2] / sum(face_stats)
         else:
             return -1
+
+    @classmethod
+    def print_benchmark_metrics(cls, benchmark_results: BenchmarkResults):
+        values = [
+            x for x in benchmark_results.all_vals if x != -1
+        ]  # -1 encodes non-planar
+        num_nonplanar = benchmark_results.all_vals.count(-1)
+        print("minimum: ", min(values))
+        print("mean: ", sum(values) / len(values))
+        print("maximum: ", max(values))
+        print(
+            f"Proportion of non-planar graphs: {num_nonplanar}/{len(benchmark_results.all_vals)}"
+        )

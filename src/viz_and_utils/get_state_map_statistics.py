@@ -12,14 +12,14 @@ from map_analyzer.benchmarks import (
     average_degree,
     clustering_coefficient,
 )
-from map_analyzer.maps.load_maps import load_all_maps, state_ids, load_map
+from map_analyzer.maps.load_maps import load_all_maps, ALL_STATE_CODES, load_map
 from collections import defaultdict
 import json
 
 
 def main():
     # state_names_to_load = ["WA", "MA"] # if you want to load specific states only
-    state_names_to_load = list(state_ids.keys())  # If you want to load all
+    state_names_to_load = ALL_STATE_CODES  # If you want to load all
     # map types are ["BLOCK", "BG", "TRACT", "COUSUB", "COUNTY"]
     map_type = "TRACT"
     loaded_maps = [

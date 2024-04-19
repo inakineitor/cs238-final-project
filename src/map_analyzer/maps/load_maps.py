@@ -1,12 +1,66 @@
 import requests
 from pathlib import Path
 import os
+from typing import Literal, get_args, Optional
 
 from tqdm import tqdm
 from gerrychain import Graph
 
+StateCode = Literal[
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+]
 
-state_ids = {
+
+state_code_to_id_dict: dict[StateCode, str] = {
     "AL": "01",
     "AK": "02",
     "AZ": "04",
@@ -59,20 +113,21 @@ state_ids = {
     "WY": "56",
 }
 
+ALL_STATE_CODES = list(get_args(StateCode))
+
 # NOTE: You must re-enable the big map formats for them to be downloaded and loaded together with the other maps
-MAP_TYPES = [
+MapType = Literal[
     "BLOCK",
     "BG",
     "TRACT",
     "COUSUB",
     "COUNTY",
 ]
+MAP_TYPES: list[MapType] = list(get_args(MapType))
 
-ALL_STATE_CODES = list(state_ids.keys())
 
-
-def get_map_link(state_code: str, map_type: str):
-    state_id = state_ids[state_code]
+def get_map_link(state_code: StateCode, map_type: MapType):
+    state_id = state_code_to_id_dict[state_code]
     map_link = (
         f"https://people.csail.mit.edu/ddeford/{map_type}/{map_type}_{state_id}.json"
     )
@@ -102,7 +157,7 @@ def download_file_with_progress(url: str, destination_path: Path):
     os.rename(temp_download_path, destination_path)
 
 
-def download_map(state_code: str, map_type: str, cache_dir: Path) -> Path:
+def download_map(state_code: StateCode, map_type: MapType, cache_dir: Path) -> Path:
     cache_file_path = cache_dir / f"{map_type}_{state_code}.json"
     if cache_file_path.is_file():
         return cache_file_path
@@ -112,14 +167,17 @@ def download_map(state_code: str, map_type: str, cache_dir: Path) -> Path:
     return cache_file_path
 
 
-def load_map(state_code: str, map_type: str, cache_dir: Path) -> Graph:
+def load_map(state_code: StateCode, map_type: MapType, cache_dir: Path) -> Graph:
     file_path = download_map(state_code, map_type, cache_dir)
     return Graph.from_json(str(file_path))
 
 
-def load_all_maps(cache_dir: Path) -> dict[str, dict[str, Graph]]:
+def load_all_maps(
+    cache_dir: Path, map_types: Optional[list[MapType]] = MAP_TYPES
+) -> dict[MapType, dict[StateCode, Graph]]:
+    map_types = map_types if map_types is not None else MAP_TYPES
     result = dict()
-    for map_type in MAP_TYPES:
+    for map_type in map_types:
         result[map_type] = dict()
         for state_code in ALL_STATE_CODES:
             result[map_type][state_code] = load_map(state_code, map_type, cache_dir)

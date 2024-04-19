@@ -13,22 +13,25 @@ from map_analyzer.benchmarks import (
     average_degree,
     clustering_coefficient,
 )  # , face_if_planar
-from map_analyzer.models import real_life_maps, triangle_edge_deletion
-
-
-NUM_ITERS = (
-    10  # INFO: The higher the number of iterations the more accurate the estimates
-    # set to 50 for comparability because we have 50 state maps
+from map_analyzer.models import (
+    real_life_maps,
+    triangle_edge_deletion,
+    flood_fill,
+    waxman,
 )
+
+NUM_ITERS = 10  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
 SEED = 238  # INFO: Seed to ensure reproducible results
 
 
 def main():
     models_to_test = [
         real_life_maps.RealLifeMaps(
-            Path("../data/maps")
+            cache_dir=Path("../data/maps"), map_types=["COUNTY", "COUSUB"]
         ),  # for sampling real-life maps
         triangle_edge_deletion.TriangleEdgeDeletionModel(),
+        flood_fill.FloodFillModel(),
+        waxman.WaxmanModel(),
         # TODO: Add more models
     ]
 
@@ -57,10 +60,7 @@ def main():
     # Run all other benchmarks
     for i in range(1, len(models_to_test)):
         if i == 1:  # triangle deletion
-            params = {}
-            params["num_vertices"] = num_vertices
-            params["p_delete"] = 0.065
-            params["model"] = "tri"
+            params = {"num_vertices": num_vertices, "p_delete": 0.065, "model": "tri"}
             nvert, graph_nodes = orchestrator.benchmark_model(
                 models_to_test[i], NUM_ITERS, SEED, extra_params=params
             )
@@ -84,31 +84,7 @@ def main():
             benchmark_name = benchmark.__class__.__name__
             print(f"===== {benchmark_name} =====")
 
-            if benchmark_name in ["RadiusBenchmark", "DiameterBenchmark"]:
-                values = [
-                    x for x in benchmark_results.all_vals if x != -1
-                ]  # -1 encodes disconnected graph
-                num_disconnected = benchmark_results.all_vals.count(-1)
-                print("minimum: ", min(values))
-                print("mean: ", sum(values) / len(values))
-                print("maximum: ", max(values))
-                print(
-                    f"Proportion of disconnected graphs: {num_disconnected}/{len(benchmark_results.all_vals)}"
-                )
-            elif benchmark_name == "FaceIfPlanar":
-                values = [
-                    x for x in benchmark_results.all_vals if x != -1
-                ]  # -1 encodes non-planar
-                num_nonplanar = benchmark_results.all_vals.count(-1)
-                print("minimum: ", min(values))
-                print("mean: ", sum(values) / len(values))
-                print("maximum: ", max(values))
-                print(
-                    f"Proportion of non-planar graphs: {num_nonplanar}/{len(benchmark_results.all_vals)}"
-                )
-            else:
-                for key in ["minimum", "mean", "maximum"]:
-                    print(f"{key}: {benchmark_results.__getattribute__(key)}")
+            benchmark.__class__.print_benchmark_metrics(benchmark_results)
 
 
 if __name__ == "__main__":
