@@ -8,15 +8,17 @@ from scipy.spatial import Delaunay
 
 
 class TriangleEdgeDeletionModel(GraphGeneratingModel):
-    def __init__(self):
+    p_delete: float
+
+    def __init__(self, p_delete: float):
         """
         Constructor for this model.
         """
+        self.p_delete = p_delete
 
     def generate_graph(self, seed=None, param_dict=None) -> Graph:
 
         num_points = param_dict["n"]
-        p_delete = param_dict["p_delete"]
 
         # Create Delaunay Configuration
         rng = np.random.default_rng(seed)
@@ -38,10 +40,10 @@ class TriangleEdgeDeletionModel(GraphGeneratingModel):
             for t in tups:
                 a, b = t
                 if rng.random() <= max(
-                    edited_p.get(a, p_delete), edited_p.get(b, p_delete)
+                    edited_p.get(a, self.p_delete), edited_p.get(b, self.p_delete)
                 ):
-                    edited_p[a] = edited_p.get(a, p_delete) + p_delete
-                    edited_p[b] = edited_p.get(b, p_delete) + p_delete
+                    edited_p[a] = edited_p.get(a, self.p_delete) + self.p_delete
+                    edited_p[b] = edited_p.get(b, self.p_delete) + self.p_delete
                     continue
                 if t not in edge_htable:
                     edge_htable.add(t)
