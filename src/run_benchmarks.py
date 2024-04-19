@@ -27,7 +27,7 @@ SEED = 238  # INFO: Seed to ensure reproducible results
 def main():
     models_to_test = [
         real_life_maps.RealLifeMaps(
-            cache_dir=Path("../data/maps"), map_types=["COUNTY", "COUSUB"]
+            cache_dir=Path("../data/maps"), map_types=["TRACT"]
         ),  # for sampling real-life maps
         triangle_edge_deletion.TriangleEdgeDeletionModel(),
         flood_fill.FloodFillModel(),
