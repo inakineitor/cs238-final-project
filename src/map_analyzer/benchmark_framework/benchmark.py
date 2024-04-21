@@ -6,6 +6,35 @@ import numpy as np
 from gerrychain import Graph
 
 
+def find_table_column_id(table: Table, column_name: str) -> int:
+    col_idx = -1
+    for i in range(len(table.columns)):
+        if table.columns[i].header == column_name:
+            col_idx = i
+            break
+    return col_idx
+
+
+def ensure_table_has_column(table: Table, column_name: str):
+    col_idx = find_table_column_id(table, column_name)
+    if col_idx == -1:
+        table.add_column(column_name)
+        col_idx = len(table.columns) - 1
+    return col_idx
+
+
+def add_values_to_table(table: Table, values: list[tuple[str, str]]):
+    column_indexes = [
+        ensure_table_has_column(table, col_name) for col_name, _ in values
+    ]
+    new_row = ["" for _ in range(len(table.columns))]
+    for i in range(len(values)):
+        _, val = values[i]
+        col_idx = column_indexes[i]
+        new_row[col_idx] = val
+    table.add_row(*new_row)
+
+
 @dataclass
 class BenchmarkResults:
     minimum: float
@@ -48,3 +77,13 @@ class Benchmark(ABC):
             str(benchmark_results.maximum),
         )
         return table
+
+    @classmethod
+    def add_benchmark_metrics_to_table(
+        cls, table: Table, benchmark_name: str, benchmark_results: BenchmarkResults
+    ):
+        values = [
+            (key, str(benchmark_results.__getattribute__(key)))
+            for key in ["minimum", "mean", "maximum"]
+        ]
+        add_values_to_table(table, [("name", benchmark_name)] + values)

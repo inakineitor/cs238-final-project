@@ -71,8 +71,9 @@ def main():
         model_benchmarks = benchmark_orchestrator_result.model_benchmarks
 
         root_style = "bold bright_blue"
+        real_life_style = "bold yellow"
         model_style = "bold green"
-        benchmark_style = "bold yellow"
+        benchmark_style = "bold green"
 
         tree = Tree(
             f"==================== [{map_metadata.map_type}] {map_metadata.state_code} ====================",
@@ -81,31 +82,29 @@ def main():
         )
 
         real_life_branch = tree.add(
-            "Real Life Map", style=model_style, guide_style=model_style
+            "Real Life Map", style=real_life_style, guide_style=real_life_style
         )
 
+        real_life_table = Table()
         for benchmark, benchmark_results in zip(benchmarks_to_run, real_map_benchmarks):
             benchmark_name = benchmark.__class__.__name__
-            benchmark_branch = real_life_branch.add(
-                benchmark_name, style=benchmark_style, guide_style=benchmark_style
+            benchmark.__class__.add_benchmark_metrics_to_table(
+                real_life_table, benchmark_name, benchmark_results
             )
-            table = benchmark.__class__.get_table_benchmark_metrics(benchmark_results)
-            benchmark_branch.add(table)
+        real_life_branch.add(real_life_table)
 
         for model, benchmarks in zip(models_to_test, model_benchmarks):
             model_name = model.__class__.__name__
             model_branch = tree.add(
                 model_name, style=model_style, guide_style=model_style
             )
+            model_table = Table()
             for benchmark, benchmark_results in zip(benchmarks_to_run, benchmarks):
                 benchmark_name = benchmark.__class__.__name__
-                benchmark_branch = model_branch.add(
-                    benchmark_name, style=benchmark_style, guide_style=benchmark_style
+                benchmark.__class__.add_benchmark_metrics_to_table(
+                    model_table, benchmark_name, benchmark_results
                 )
-                table = benchmark.__class__.get_table_benchmark_metrics(
-                    benchmark_results
-                )
-                benchmark_branch.add(table)
+            model_branch.add(model_table)
 
         console.print(tree)
 
