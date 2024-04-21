@@ -38,7 +38,7 @@ def main():
 
     models_to_test = [
         triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065),
-        # flood_fill.FloodFillModel(),
+        flood_fill.FloodFillModel(),
         waxman.WaxmanModel(beta=0.4, alpha=0.1),
         # TODO: Add more models
     ]

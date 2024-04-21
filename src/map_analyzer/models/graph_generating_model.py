@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import numpy as np
 from typing import Generic, Optional, Union, Any, TypeVar
+from rich.progress import track
 
 from gerrychain import Graph
 from numpy.random import Generator
@@ -36,5 +37,8 @@ class GraphGeneratingModel(ABC, Generic[MetadataType]):
 
         return [
             self.generate_graph(constraints=constraints, seed=rng)
-            for _ in range(num_graphs)
+            for _ in track(
+                range(num_graphs),
+                description=f"Generating {self.__class__.__name__} graphs...",
+            )
         ]
