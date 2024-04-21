@@ -1,4 +1,7 @@
 from pathlib import Path
+from rich.console import Console
+from rich.tree import Tree
+from rich.table import Table
 
 from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
@@ -25,13 +28,18 @@ SEED = 238  # INFO: Seed to ensure reproducible results
 
 
 def main():
+    console = Console()
+
+    console.print("Loading real life models...")
+    real_life_model = real_life_maps.RealLifeMaps(
+        cache_dir=Path("../data/maps"), map_types=["COUNTY"]
+    )  # for sampling real-life maps
+    console.print("Real life models loaded", style="green")
+
     models_to_test = [
-        real_life_maps.RealLifeMaps(
-            cache_dir=Path("../data/maps"), map_types=["TRACT"]
-        ),  # for sampling real-life maps
-        triangle_edge_deletion.TriangleEdgeDeletionModel(),
-        flood_fill.FloodFillModel(),
-        waxman.WaxmanModel(),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065),
+        # flood_fill.FloodFillModel(),
+        waxman.WaxmanModel(beta=0.4, alpha=0.1),
         # TODO: Add more models
     ]
 
@@ -48,52 +56,58 @@ def main():
 
     orchestrator = BenchmarkOrchestrator(benchmarks_to_run)
 
-    # Collate results
-    benchmark_orchestrator_results: list[BenchmarkOrchestratorResults] = []
-
-    # Run real-life benchmark
-    num_vertices, graph_nodes = orchestrator.benchmark_model(
-        models_to_test[0], NUM_ITERS, SEED
+    console.print("Processing benchmark results...")
+    benchmark_orchestrator_results = orchestrator.benchmark_null_models_against_real(
+        real_life_model=real_life_model,
+        models=models_to_test,
+        num_iters=NUM_ITERS,
+        seed=SEED,
     )
-    benchmark_orchestrator_results.append(graph_nodes)
+    console.print("Benchmark results processed", style="green")
 
-    # Run all other benchmarks
-    for i in range(1, len(models_to_test)):
-        if i >= 1:  # triangle deletion
-            params = {"num_vertices": num_vertices, "p_delete": 0.065, "model": "tri"}
-            nvert, graph_nodes = orchestrator.benchmark_model(
-                models_to_test[i], NUM_ITERS, SEED, extra_params=params
-            )
+    for benchmark_orchestrator_result in benchmark_orchestrator_results:
+        map_metadata = benchmark_orchestrator_result.real_map_generation.metadata
+        real_map_benchmarks = benchmark_orchestrator_result.real_map_benchmarks
+        model_benchmarks = benchmark_orchestrator_result.model_benchmarks
 
-            print(nvert)
-            print(num_vertices)
-            benchmark_orchestrator_results.append(graph_nodes)
-        if i == 3:  # waxman
-            params = {"num_vertices": num_vertices, "model": "waxman"}
-            nvert, graph_nodes = orchestrator.benchmark_model(
-                models_to_test[i], NUM_ITERS, SEED, extra_params=params
-            )
+        root_style = "bold bright_blue"
+        model_style = "bold green"
+        benchmark_style = "bold yellow"
 
-            print(nvert)
-            print(num_vertices)
-            benchmark_orchestrator_results.append(graph_nodes)
+        tree = Tree(
+            f"==================== [{map_metadata.map_type}] {map_metadata.state_code} ====================",
+            style=root_style,
+            guide_style=root_style,
+        )
 
-    # benchmark_orchestrator_results = orchestrator.benchmark_models(
-    #     models_to_test, NUM_ITERS, SEED
-    # )
+        real_life_branch = tree.add(
+            "Real Life Map", style=model_style, guide_style=model_style
+        )
 
-    for model, orchestrator_results in zip(
-        models_to_test, benchmark_orchestrator_results
-    ):
-        model_name = model.__class__.__name__
-        print(f"========== {model_name} ==========")
-        for benchmark, benchmark_results in zip(
-            benchmarks_to_run, orchestrator_results.benchmarks
-        ):
+        for benchmark, benchmark_results in zip(benchmarks_to_run, real_map_benchmarks):
             benchmark_name = benchmark.__class__.__name__
-            print(f"===== {benchmark_name} =====")
+            benchmark_branch = real_life_branch.add(
+                benchmark_name, style=benchmark_style, guide_style=benchmark_style
+            )
+            table = benchmark.__class__.get_table_benchmark_metrics(benchmark_results)
+            benchmark_branch.add(table)
 
-            benchmark.__class__.print_benchmark_metrics(benchmark_results)
+        for model, benchmarks in zip(models_to_test, model_benchmarks):
+            model_name = model.__class__.__name__
+            model_branch = tree.add(
+                model_name, style=model_style, guide_style=model_style
+            )
+            for benchmark, benchmark_results in zip(benchmarks_to_run, benchmarks):
+                benchmark_name = benchmark.__class__.__name__
+                benchmark_branch = model_branch.add(
+                    benchmark_name, style=benchmark_style, guide_style=benchmark_style
+                )
+                table = benchmark.__class__.get_table_benchmark_metrics(
+                    benchmark_results
+                )
+                benchmark_branch.add(table)
+
+        console.print(tree)
 
 
 if __name__ == "__main__":
