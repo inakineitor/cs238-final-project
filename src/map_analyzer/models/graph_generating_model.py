@@ -1,42 +1,40 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 import numpy as np
-from typing import Optional, Union, Any
+from typing import Generic, Optional, Union, Any, TypeVar
 
 from gerrychain import Graph
 from numpy.random import Generator
 
+from map_analyzer.benchmark_framework.model_constraint_generator import ModelConstraints
 
-class GraphGeneratingModel(ABC):
+MetadataType = TypeVar("MetadataType")
+
+
+@dataclass
+class GraphGeneration(Generic[MetadataType]):
+    graph: Graph
+    metadata: MetadataType
+
+
+class GraphGeneratingModel(ABC, Generic[MetadataType]):
     @abstractmethod
-    def generate_graph(self, seed: Optional[Union[int, Generator]] = None) -> Graph:
+    def generate_graph(
+        self,
+        constraints: ModelConstraints,
+        seed: Optional[Union[int, Generator]] = None,
+    ) -> GraphGeneration[MetadataType]:
         pass
 
     def generate_graphs(
         self,
         num_graphs: int,
+        constraints: ModelConstraints,
         seed: Optional[int] = None,
-        opt_params: Optional[dict[str, Any]] = None,
-    ) -> list[Graph]:
+    ) -> list[GraphGeneration[MetadataType]]:
         rng = np.random.default_rng(seed)
 
-        if opt_params:  # indicates a null model
-            returnres = []
-            if opt_params["model"] == "tri":  # triangle deletion model
-                for i in range(num_graphs):
-                    params = {}
-                    params["p_delete"] = opt_params["p_delete"]
-                    params["n"] = opt_params["num_vertices"][i]
-                    returnres.append(self.generate_graph(seed=rng, param_dict=params))
-                return returnres
-            if opt_params["model"] == "waxman":  # triangle deletion model
-                for i in range(num_graphs):
-                    params = {}
-                    # params["p_delete"] = opt_params["p_delete"]
-                    params["n"] = opt_params["num_vertices"][i]
-                    returnres.append(self.generate_graph(seed=rng, param_dict=params))
-                return returnres
-        else:  # real life graphs
-            return [
-                self.generate_graph(seed=rng, param_dict=opt_params)
-                for _ in range(num_graphs)
-            ]
+        return [
+            self.generate_graph(constraints=constraints, seed=rng)
+            for _ in range(num_graphs)
+        ]

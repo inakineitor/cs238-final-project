@@ -1,36 +1,33 @@
+from warnings import warn
 from gerrychain import Graph
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from random import choice
 
-from .graph_generating_model import GraphGeneratingModel
+from .graph_generating_model import GraphGeneratingModel, GraphGeneration
 
 DISPLAY_PLOTS = False
 DISPLAY_PLOT_OPTIONS = {"node_size": 500}
 
 
 class FloodFillModel(GraphGeneratingModel):
-    graph_width: int
-    graph_height: int
-
-    def __init__(self, graph_width=20, graph_height=20):
+    def __init__(self):
         """
         Constructor for the FloodFillModel.
         """
-        self.graph_width = graph_width
-        self.graph_height = graph_height
 
-    def generate_graph(self, seed=None, param_dict=None) -> Graph:
-
-        num_points = param_dict["n"]  # TODO: Add typing to `param_dict`
+    def generate_graph(self, constraints, seed=None) -> GraphGeneration[None]:
+        num_points = constraints.num_nodes
+        graph_width = num_points
+        graph_height = num_points
 
         rng = np.random.default_rng(seed)
 
         num_walkers = num_points  # number of walkers
 
         # grid = nx.grid_graph([self.graph_width, self.graph_height]) # TODO: Update this with message passing
-        grid = nx.grid_graph([num_points, num_points])
+        grid = nx.grid_graph([graph_width, graph_height])
 
         unassigned = list(grid.nodes())
 
@@ -88,7 +85,7 @@ class FloodFillModel(GraphGeneratingModel):
             plt.show()
 
         if DISPLAY_PLOTS:
-            grid2 = nx.grid_graph([self.graph_width, self.graph_height])
+            grid2 = nx.grid_graph([graph_width, graph_height])
             print(grid2)
             plt.figure()
             nx.draw(
@@ -102,4 +99,4 @@ class FloodFillModel(GraphGeneratingModel):
             plt.title("Full Partition")
             plt.show()
 
-        return dual_graph
+        return GraphGeneration(graph=dual_graph, metadata=None)

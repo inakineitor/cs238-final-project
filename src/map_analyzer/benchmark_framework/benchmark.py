@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from rich.table import Table
 
 import numpy as np
 from gerrychain import Graph
@@ -34,3 +35,16 @@ class Benchmark(ABC):
     def print_benchmark_metrics(cls, benchmark_results: BenchmarkResults):
         for key in ["minimum", "mean", "maximum"]:
             print(f"{key}: {benchmark_results.__getattribute__(key)}")
+
+    @classmethod
+    def get_table_benchmark_metrics(cls, benchmark_results: BenchmarkResults) -> Table:
+        table = Table()
+        table.add_column("Minimum")
+        table.add_column("Mean")
+        table.add_column("Maximum")
+        table.add_row(
+            str(benchmark_results.minimum),
+            str(benchmark_results.mean),
+            str(benchmark_results.maximum),
+        )
+        return table
