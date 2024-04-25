@@ -60,8 +60,15 @@ class FloodFillModel(GraphGeneratingModel):
             rng.shuffle(order)
 
             for i in order:
+                potential_moves = list(grid.neighbors(walkers[i]))
+                if not potential_moves or all(
+                    [move not in unassigned for move in potential_moves]
+                ):
+                    walkers.pop(i)
+                    continue
+
                 old = walkers[i]
-                walkers[i] = tuple(rng.choice(list(grid.neighbors(walkers[i]))))
+                walkers[i] = tuple(rng.choice(potential_moves))
                 if walkers[i] in unassigned:
                     unassigned.remove(walkers[i])
                     cdict[walkers[i]] = i + 1
