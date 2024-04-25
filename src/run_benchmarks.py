@@ -37,9 +37,12 @@ def main():
     console.print("Real life models loaded", style="green")
 
     models_to_test = [
-        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065),
-        flood_fill.FloodFillModel(),
-        waxman.WaxmanModel(beta=0.4, alpha=0.1),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=False),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=False),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=True),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=True),
+        # flood_fill.FloodFillModel(),
+        # waxman.WaxmanModel(beta=0.4, alpha=0.1),
         # TODO: Add more models
     ]
 
