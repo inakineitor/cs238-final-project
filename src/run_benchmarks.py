@@ -19,8 +19,8 @@ from map_analyzer.benchmarks import (
 from map_analyzer.models import (
     real_life_maps,
     triangle_edge_deletion,
-    flood_fill,
-    waxman,
+    # flood_fill,
+    #  waxman,
 )
 
 NUM_ITERS = 10  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
@@ -32,7 +32,7 @@ def main():
 
     console.print("Loading real life models...")
     real_life_model = real_life_maps.RealLifeMaps(
-        cache_dir=Path("../data/maps"), map_types=["COUNTY"]
+        cache_dir=Path("../data/maps"), map_types=["TRACT"]
     )  # for sampling real-life maps
     console.print("Real life models loaded", style="green")
 
