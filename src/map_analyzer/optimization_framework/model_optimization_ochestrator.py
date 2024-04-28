@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
-from numpy import mean
+import numpy as np
 from numpy.random import Generator
 from scipy.stats import entropy
 from rich.progress import track
@@ -14,8 +14,11 @@ from map_analyzer.benchmark_framework.model_constraint_generator import (
     ModelConstraints,
     generate_constraints_from_graph,
 )
-from map_analyzer.models.graph_generating_model import GraphGeneratingModel
-from map_analyzer.models.real_life_maps import RealLifeMaps
+from map_analyzer.models.graph_generating_model import (
+    GraphGeneratingModel,
+    GraphGeneration,
+)
+from map_analyzer.models.real_life_maps import RealLifeMapMetadata, RealLifeMaps
 from map_analyzer.optimization_framework.model_parameter_optimizer import (
     AllOptimizationResult,
     ModelParameterOptimizer,
@@ -73,17 +76,32 @@ class ModelOptimizationOrchestrator:
     #     # self.benchmark_orchestrator
     #     pass
 
-    def calculate_kl_divergence_loss(
+    def calculate_kl_divergence_focus_loss(
+        self,
+        real_benchmark: BenchmarkResults,
+        model_benchmark: BenchmarkResults,
+    ) -> float:
+        # TODO: Check if this is the correct way to calculate KL divergence
+        all_real_values = real_benchmark.all_vals
+        all_model_values = model_benchmark.all_vals
+        return np.linalg.norm(np.array(all_model_values) - np.array(all_real_values))
+        bin_edges = np.histogram_bin_edges(all_model_values, bins="auto")
+        pk, _ = np.histogram(all_real_values, bins=bin_edges, density=True)
+        qk, _ = np.histogram(all_model_values, bins=bin_edges, density=True)
+        kl_divergence = entropy(pk, qk)
+        return kl_divergence
+
+    def calculate_kl_divergence_all_loss(
         self,
         real_benchmarks: list[BenchmarkResults],
         model_benchmarks: list[BenchmarkResults],
     ) -> list[float]:
         # return a list of KL divergence values between the real and model benchmarks
         # for each benchmark
-        # TODO: Check if this is the correct way to calculate KL divergence
         return [
-            # entropy(real_benchmarks[i].all_vals, model_benchmarks[i].all_vals)
-            mean(model_benchmarks[i].all_vals)
+            self.calculate_kl_divergence_focus_loss(
+                real_benchmarks[i], model_benchmarks[i]
+            )
             for i in range(len(real_benchmarks))
         ]
 
@@ -105,20 +123,18 @@ class ModelOptimizationOrchestrator:
             model_benchmarks = self.benchmark_orchestrator.benchmark_graphs(
                 [generation.graph for generation in graph_generations]
             )
-            all_loss = self.calculate_kl_divergence_loss(
+            all_loss = self.calculate_kl_divergence_all_loss(
                 real_benchmarks=real_benchmarks, model_benchmarks=model_benchmarks
             )
-            print(all_loss)
+            print(f"All Loss: {all_loss}")
             return all_loss
 
-        benchmark_focus_results = [
-            self.optimizers[0].find_best_parameters_for_all_loss(
-                parameter_bounds=optimizable_model.parameter_bounds,
-                all_loss_function=all_loss_function,
-                all_loss_size=len(real_benchmarks),
-                seed=seed,
-            )
-        ]
+        benchmark_focus_results = self.optimizers[0].find_best_parameters_for_all_loss(
+            parameter_bounds=optimizable_model.parameter_bounds,
+            all_loss_function=all_loss_function,
+            all_loss_size=len(real_benchmarks),
+            seed=seed,
+        )
 
         # benchmark_focus_results = [
         #     self.optimizers[
@@ -139,11 +155,10 @@ class ModelOptimizationOrchestrator:
 
     def optimize_null_models_against_real(
         self,
-        real_life_model: RealLifeMaps,
+        real_map_generations: list[GraphGeneration[RealLifeMapMetadata]],
         optimizable_models: list[OptimizableModel],
         seed: Optional[Union[int, Generator]] = None,
     ) -> list[ModelOptimizationResult]:
-        real_map_generations = real_life_model.get_all_graphs()
         real_constraints = [
             generate_constraints_from_graph(graph_generation.graph)
             for graph_generation in real_map_generations

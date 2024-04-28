@@ -4,6 +4,7 @@ import numpy as np
 from numpy.random import Generator
 
 from map_analyzer.optimization_framework.model_parameter_optimizer import (
+    AllOptimizationResult,
     FocusLossFunction,
     FocusOptimizationResult,
     ModelParameterOptimizer,
@@ -43,6 +44,36 @@ class GridSearchOptimizer(ModelParameterOptimizer):
         return FocusOptimizationResult(
             parameters=best_parameters, focus_loss=best_focus_loss
         )
+
+    def find_best_parameters_for_all_loss(
+        self, parameter_bounds, all_loss_function, all_loss_size, seed=None
+    ) -> list[AllOptimizationResult]:
+        parameter_grid = self._create_parameter_grid(
+            parameter_bounds, self.parameter_interval
+        )
+
+        parameter_all_loss = {}
+        for parameters in parameter_grid:
+            all_loss_value = all_loss_function(*parameters)
+            print(f"Parameters: {parameters}, Loss: {all_loss_value}")
+            parameter_all_loss[tuple(parameters)] = all_loss_value
+
+        def get_min_focus_loss(focus_loss_index: int):
+            return min(
+                parameter_all_loss.items(),
+                key=lambda x: x[1][focus_loss_index],
+            )
+
+        return [
+            AllOptimizationResult(
+                parameters=parameters,
+                all_loss=all_loss,
+                focus_index=focus_loss_index,
+            )
+            for focus_loss_index, (parameters, all_loss) in enumerate(
+                map(get_min_focus_loss, range(all_loss_size))
+            )
+        ]
 
     def _create_parameter_grid(
         self, parameter_bounds: ParameterBounds, interval: float

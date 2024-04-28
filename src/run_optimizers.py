@@ -4,6 +4,7 @@ from typing import Callable
 from rich.console import Console
 from rich.tree import Tree
 from rich.table import Table
+import networkx as nx
 
 from map_analyzer.benchmark_framework.benchmark_orchestrator import (
     BenchmarkOrchestrator,
@@ -17,7 +18,8 @@ from map_analyzer.benchmarks import (
     assortativity,
     average_degree,
     clustering_coefficient,
-)  # , face_if_planar
+    face_if_planar,
+)
 from map_analyzer.models import (
     real_life_maps,
     triangle_edge_deletion,
@@ -37,6 +39,7 @@ from map_analyzer.optimizers import (
 
 NUM_ITERS = 10  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
 SEED = 238  # INFO: Seed to ensure reproducible results
+LOAD_RESULTS_FROM_FILE = False  # INFO: Set to True to load results from file
 
 
 def main():
@@ -68,7 +71,7 @@ def main():
             lambda beta, alpha: waxman.WaxmanModel(beta=beta, alpha=alpha),
             [(0, 1), (0, 1)],
         ),
-        # flood_fill.FloodFillModel(), # NOTE: FloodFillModel does not have any parameters to optimize
+        # flood_fill.FloodFillModel(),  # NOTE: FloodFillModel does not have any parameters to optimize
     ]
 
     optimizers_to_run = [
@@ -85,7 +88,7 @@ def main():
         maximum_degree.MaximumDegreeBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
         radius.RadiusBenchmark(),
-        # face_if_planar.FaceIfPlanarBenchmark()
+        face_if_planar.FaceIfPlanarBenchmark(),
     ]
 
     benchmark_orchestrator = BenchmarkOrchestrator(benchmarks_to_run)
@@ -94,12 +97,27 @@ def main():
     )
 
     console.print("Processing benchmark results...")
-    optimization_results = optimization_orchestrator.optimize_null_models_against_real(
-        real_life_model=real_life_model,
-        optimizable_models=models_to_optimize,
-        seed=SEED,
-    )
+    optimization_results = None
+    if LOAD_RESULTS_FROM_FILE:
+        with open("optimization_results.pkl", "rb") as inp:
+            optimization_results = pickle.load(inp)
+    else:
+        real_map_generations = real_life_model.get_all_graphs()
+        planar_graph_generations = [  # INFO: We only care about planar graphs
+            graph_generation
+            for graph_generation in real_map_generations
+            if nx.is_planar(graph_generation.graph)
+        ]
+        optimization_results = (
+            optimization_orchestrator.optimize_null_models_against_real(
+                real_map_generations=planar_graph_generations,
+                optimizable_models=models_to_optimize,
+                seed=SEED,
+            )
+        )
     console.print("Benchmark results processed", style="green")
+
+    # print(optimization_results)
 
     for optimizable_model, model_opt_result in zip(
         models_to_optimize, optimization_results
@@ -130,7 +148,7 @@ def main():
         console.print(tree)
 
     with open("optimization_results.pkl", "wb") as outp:
-        pickle.dump(optimization_results, outp, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(optimization_results, outp)
 
 
 if __name__ == "__main__":
