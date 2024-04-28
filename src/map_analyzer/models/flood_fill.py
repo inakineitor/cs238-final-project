@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from random import choice
 
-from .graph_generating_model import GraphGeneratingModel, GraphGeneration
+from map_analyzer.models.graph_generating_model import GraphGeneratingModel, GraphGeneration
+# from graph_generating_model import GraphGeneratingModel, GraphGeneration
 
 DISPLAY_PLOTS = False
 DISPLAY_PLOT_OPTIONS = {"node_size": 500}
@@ -64,9 +65,14 @@ class FloodFillModel(GraphGeneratingModel):
                 if not potential_moves or all(
                     [move not in unassigned for move in potential_moves]
                 ):
-                    walkers.pop(i)
-                    continue
-
+                    #walkers.pop(i)
+                    same_color = [pos for pos in grid.nodes() if cdict[pos] == i + 1]
+                    if same_color:
+                        walkers[i] = tuple(rng.choice(same_color))
+                        continue
+                    else:
+                        walkers.pop(i)
+                
                 old = walkers[i]
                 walkers[i] = tuple(rng.choice(potential_moves))
                 if walkers[i] in unassigned:

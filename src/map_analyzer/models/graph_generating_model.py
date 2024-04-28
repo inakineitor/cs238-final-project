@@ -7,6 +7,7 @@ import pickle
 from gerrychain import Graph
 from numpy.random import Generator
 
+#from map_analyzer.benchmark_framework.model_constraint_generator import ModelConstraints
 from map_analyzer.benchmark_framework.model_constraint_generator import ModelConstraints
 
 MetadataType = TypeVar("MetadataType")
