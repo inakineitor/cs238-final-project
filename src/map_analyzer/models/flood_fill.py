@@ -65,13 +65,9 @@ class FloodFillModel(GraphGeneratingModel):
                 if not potential_moves or all(
                     [move not in unassigned for move in potential_moves]
                 ):
-                    #walkers.pop(i)
-                    same_color = [pos for pos in grid.nodes() if cdict[pos] == i + 1]
-                    if same_color:
-                        walkers[i] = tuple(rng.choice(same_color))
-                        continue
-                    else:
-                        walkers.pop(i)
+                    walkers.pop(i)
+                    continue
+                    
                 
                 old = walkers[i]
                 walkers[i] = tuple(rng.choice(potential_moves))
