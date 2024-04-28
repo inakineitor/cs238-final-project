@@ -11,7 +11,7 @@ from map_analyzer.models.graph_generating_model import (
     GraphGeneration,
 )
 from map_analyzer.models.real_life_maps import RealLifeMapMetadata, RealLifeMaps
-from .benchmark import Benchmark, BenchmarkResults
+from .benchmark_rhea import Benchmark, BenchmarkResults
 
 
 @dataclass

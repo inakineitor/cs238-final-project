@@ -66,7 +66,7 @@ def main():
     benchmark_orchestrator_results = orchestrator.benchmark_null_models_against_real(
         real_life_model=real_life_model,
         models=models_to_test,
-        num_iters=NUM_ITERS,
+        num_iters=NUM_ITERS,  
         seed=SEED,
     )
     console.print("Benchmark results processed", style="green")
@@ -112,20 +112,31 @@ def main():
                 )
             model_branch.add(model_table)
 
+        print("1")
         constraints = ModelConstraints.generate_constraints_from_graph(real_life_model)
+        print("2")
         random.seed(111)
+        print("3")
         model = flood_fill.FloodFillModel()
+        print("4")
         graph_desired = model.generate_graph(constraints)
+        print("5")
         # def save_graph_data(graph_data, filename):
         output_dir = Path("../data/maps")
+        print("6")
         output_dir.mkdir(parents=True, exist_ok=True)
+        print("7")
         model_class_name = "FloodFillModel"
+        print("8")
         filename = output_dir / f"{model_class_name}_{map_metadata.state_code}_graph.pkl"
+        print("9")
         with open(filename, 'wb') as f:
+            print("10")
             pickle.dump(graph_desired, f)
 
         # def load_graph_data(filename):
         with open(filename, 'rb') as f:
+            print("11")
             loaded_graph_data = pickle.load(f)
   
         console.print(tree)
