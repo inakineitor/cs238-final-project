@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
 from numpy.random import Generator
+from rich.progress import track
 
 
 @dataclass
@@ -54,3 +55,23 @@ class ModelParameterOptimizer(ABC):
             all_loss=all_loss,
             focus_index=focus_loss_index,
         )
+
+    def find_best_parameters_for_all_loss(
+        self,
+        parameter_bounds: ParameterBounds,
+        all_loss_function: AllLossFunction,
+        all_loss_size: int,
+        seed: Optional[Union[int, Generator]] = None,
+    ) -> list[AllOptimizationResult]:
+        return [
+            self.find_best_parameters(  # TODO: Make it use all optimizers instead of just the first one
+                parameter_bounds=parameter_bounds,
+                all_loss_function=all_loss_function,
+                focus_loss_index=focus_loss_index,
+                seed=seed,
+            )
+            for focus_loss_index in track(
+                range(all_loss_size),
+                description="Optimizing focus...",
+            )
+        ]

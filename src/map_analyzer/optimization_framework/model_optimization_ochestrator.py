@@ -112,19 +112,28 @@ class ModelOptimizationOrchestrator:
             return all_loss
 
         benchmark_focus_results = [
-            self.optimizers[
-                0
-            ].find_best_parameters(  # TODO: Make it use all optimizers instead of just the first one
+            self.optimizers[0].find_best_parameters_for_all_loss(
                 parameter_bounds=optimizable_model.parameter_bounds,
                 all_loss_function=all_loss_function,
-                focus_loss_index=focus_loss_index,
+                all_loss_size=len(real_benchmarks),
                 seed=seed,
             )
-            for focus_loss_index in track(
-                range(len(real_benchmarks)),
-                description="Optimizing focus...",
-            )
         ]
+
+        # benchmark_focus_results = [
+        #     self.optimizers[
+        #         0
+        #     ].find_best_parameters(  # TODO: Make it use all optimizers instead of just the first one
+        #         parameter_bounds=optimizable_model.parameter_bounds,
+        #         all_loss_function=all_loss_function,
+        #         focus_loss_index=focus_loss_index,
+        #         seed=seed,
+        #     )
+        #     for focus_loss_index in track(
+        #         range(len(real_benchmarks)),
+        #         description="Optimizing focus...",
+        #     )
+        # ]
 
         return ModelOptimizationResult(benchmark_focus_results=benchmark_focus_results)
 

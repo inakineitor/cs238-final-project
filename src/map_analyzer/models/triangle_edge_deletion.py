@@ -5,8 +5,9 @@ from .graph_generating_model import GraphGeneratingModel, GraphGeneration
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
-import random 
+import random
 import math
+
 
 class TriangleEdgeDeletionModel(GraphGeneratingModel):
     p_delete: float
@@ -42,60 +43,62 @@ class TriangleEdgeDeletionModel(GraphGeneratingModel):
                     max([triangle[i - 1], triangle[i % (len(triangle) - 1)]]),
                 )
 
-            for t in tups: # process this triangle 
+            for t in tups:  # process this triangle
                 a, b = t
                 if t not in edge_htable:
                     edge_htable.add(t)
                     g.add_edge(a, b)
                     edges.append(t)
-        
-        if not self.deterministic: # probabilistic deletion 
+
+        if not self.deterministic:  # probabilistic deletion
             continueflag = False
-            for e in g.edges: # if deleting would cause the graph to become non-connected, then don't delete 
+            for i, e in enumerate(
+                g.edges
+            ):  # if deleting would cause the graph to become non-connected, then don't delete
                 if rng.random() <= self.p_delete or continueflag:
                     u, v = e
                     if self.keep_connected:
-                        if not nx.is_connected(g):                      # if this removal makes graph disconnected,
-                            g.add_edge(u, v)    # add it back
-                            continueflag = True                     # and remove again next time 
-                            print("Edge restored bc connectivity violation")
+                        if not nx.is_connected(
+                            g
+                        ):  # if this removal makes graph disconnected,
+                            g.add_edge(u, v)  # add it back
+                            continueflag = True  # and remove again next time
+                            # print("Edge restored bc connectivity violation")
                         else:
-                            continueflag = False 
-            
+                            continueflag = False
+
             # TODO - add post-pruning step here that makes more leaves
             # graph = Graph(nx.Graph(edges))
             return GraphGeneration(graph=g, metadata=None)
 
-        else: # deterministic sampling
+        else:  # deterministic sampling
             continueflag = False
             edges = [e for e in g.edges]
-            print(edges)
-            print(len(edges))
-            print(self.p_delete)
-            print(self.p_delete * len(edges))
             to_remove = random.sample(edges, math.ceil(self.p_delete * len(edges)))
-            for t in to_remove:
-                edges.remove(t)
+            edges_minus_to_remove = [e for e in edges if e not in to_remove]
             for e in to_remove:
-                if continueflag:
-                    random_edge = random.choice(edges)
-                    a,b = random_edge
-                    edges.remove(random_edge)
-                    g.remove_edge(a, b)
-                    if not nx.is_connected(g): # add it back 
-                        g.add_edge(a, b)
-                        continueflag = True
-                        print("Edge restored bc connectivity violation")
-                    else:
-                        continueflag = False
+                # if continueflag:
+                #     random_edge = random.choice(edges_minus_to_remove)
+                #     a, b = random_edge
+                #     edges.remove(random_edge)
+                #     g.remove_edge(a, b)
+                #     if not nx.is_connected(g):  # add it back
+                #         g.add_edge(a, b)
+                #         edges.append(random_edge)
+                #         continueflag = True
+                #         print("Edge restored bc connectivity violation")
+                #     else:
+                #         continueflag = False
 
                 a, b = e
+                edges.remove(e)
                 g.remove_edge(a, b)
                 if self.keep_connected:
-                    if not nx.is_connected(g): # add it back 
+                    if not nx.is_connected(g):  # add it back
+                        edges.append(e)
                         g.add_edge(a, b)
                         continueflag = True
-                        print("Edge restored bc connectivity violation")
+                        # print("Edge restored bc connectivity violation")
                 else:
                     continueflag = False
             return GraphGeneration(graph=g, metadata=None)
@@ -103,7 +106,7 @@ class TriangleEdgeDeletionModel(GraphGeneratingModel):
 
 ## Some Heuristics from lawrence
 
-#     a, b = t  # FIX: There is also a type error here 
+#     a, b = t  # FIX: There is also a type error here
 #     if rng.random() <= max(
 #         edited_p.get(a, self.p_delete), edited_p.get(b, self.p_delete)
 #     ):

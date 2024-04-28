@@ -19,11 +19,11 @@ from map_analyzer.benchmarks import (
 from map_analyzer.models import (
     real_life_maps,
     triangle_edge_deletion,
-    # flood_fill,
-    #  waxman,
+    flood_fill,
+    waxman,
 )
 
-NUM_ITERS = 10  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
+NUM_ITERS = 1  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
 SEED = 238  # INFO: Seed to ensure reproducible results
 
 
@@ -37,12 +37,20 @@ def main():
     console.print("Real life models loaded", style="green")
 
     models_to_test = [
-        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=False),
-        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=False),
-        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=True),
-        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=True),
-        # flood_fill.FloodFillModel(),
-        # waxman.WaxmanModel(beta=0.4, alpha=0.1),
+        # triangle_edge_deletion.TriangleEdgeDeletionModel(
+        #     p_delete=1, keep_connected=False, deter=False
+        # ),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(
+            p_delete=1, keep_connected=True, deter=False
+        ),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(
+            p_delete=1, keep_connected=True, deter=True
+        ),
+        # triangle_edge_deletion.TriangleEdgeDeletionModel(
+        #     p_delete=0.065, keep_connected=False, deter=True
+        # ),
+        flood_fill.FloodFillModel(),
+        waxman.WaxmanModel(beta=0.4, alpha=0.1),
         # TODO: Add more models
     ]
 
