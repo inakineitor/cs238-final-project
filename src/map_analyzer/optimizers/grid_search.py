@@ -33,7 +33,7 @@ class GridSearchOptimizer(ModelParameterOptimizer):
 
         # Iterate over each parameter combination in the grid
         for parameters in parameter_grid:
-            focus_loss_value = focus_loss(parameters)
+            focus_loss_value = focus_loss(*parameters)
             print(f"Parameters: {parameters}, Loss: {focus_loss_value}")
 
             if focus_loss_value < best_focus_loss:

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
+from numpy import mean
 from numpy.random import Generator
 from scipy.stats import entropy
 from rich.progress import track
@@ -81,7 +82,8 @@ class ModelOptimizationOrchestrator:
         # for each benchmark
         # TODO: Check if this is the correct way to calculate KL divergence
         return [
-            entropy(real_benchmarks[i].all_vals, model_benchmarks[i].all_vals)
+            # entropy(real_benchmarks[i].all_vals, model_benchmarks[i].all_vals)
+            mean(model_benchmarks[i].all_vals)
             for i in range(len(real_benchmarks))
         ]
 

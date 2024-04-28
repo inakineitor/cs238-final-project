@@ -49,27 +49,27 @@ def main():
     console.print("Real life models loaded", style="green")
 
     models_to_optimize: list[OptimizableModel] = [
-        OptimizableModel(
-            "TriangleEdgeDeletionModel_False_False",
-            lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
-                p_delete=p_delete, keep_connected=False, deter=False
-            ),
-            [(0, 1)],
-        ),
-        OptimizableModel(
-            "TriangleEdgeDeletionModel_False_True",
-            lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
-                p_delete=p_delete, keep_connected=False, deter=True
-            ),
-            [(0, 1)],
-        ),
-        OptimizableModel(
-            "TriangleEdgeDeletionModel_True_False",
-            lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
-                p_delete=p_delete, keep_connected=True, deter=False
-            ),
-            [(0, 1)],
-        ),
+        # OptimizableModel(
+        #     "TriangleEdgeDeletionModel_False_False",
+        #     lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
+        #         p_delete=p_delete, keep_connected=False, deter=False
+        #     ),
+        #     [(0, 1)],
+        # ),
+        # OptimizableModel(
+        #     "TriangleEdgeDeletionModel_False_True",
+        #     lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
+        #         p_delete=p_delete, keep_connected=False, deter=True
+        #     ),
+        #     [(0, 1)],
+        # ),
+        # OptimizableModel(
+        #     "TriangleEdgeDeletionModel_True_False",
+        #     lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
+        #         p_delete=p_delete, keep_connected=True, deter=False
+        #     ),
+        #     [(0, 1)],
+        # ),
         OptimizableModel(
             "TriangleEdgeDeletionModel_True_True",
             lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
@@ -92,7 +92,7 @@ def main():
     ]
 
     benchmarks_to_run = [
-        assortativity.AssortativityBenchmark(),
+        # assortativity.AssortativityBenchmark(),
         average_degree.AverageDegreeBenchmark(),
         clustering_coefficient.ClusteringCoefficientBenchmark(),
         diameter.DiameterBenchmark(),
