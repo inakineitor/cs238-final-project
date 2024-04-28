@@ -1,0 +1,1 @@
+# NOTE: For now we will not be implementing Paricle Swarm Optimization such as the one from PySwarm because the input format is different from the Scipy optimization library and so it would require significant effort to add.
