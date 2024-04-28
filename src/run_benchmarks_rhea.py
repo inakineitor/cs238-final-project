@@ -113,7 +113,7 @@ def main():
             model_branch.add(model_table)
 
         print("1")
-        constraints = ModelConstraints.generate_constraints_from_graph(real_life_model)
+        constraints = map_analyzer.benchmark_framework.model_constraint_generator.generate_constraints_from_graph(real_life_model)
         print("2")
         random.seed(111)
         print("3")
