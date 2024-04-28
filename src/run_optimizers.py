@@ -70,13 +70,13 @@ def main():
         #     ),
         #     [(0, 1)],
         # ),
-        OptimizableModel(
-            "TriangleEdgeDeletionModel_True_True",
-            lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
-                p_delete=p_delete, keep_connected=True, deter=True
-            ),
-            [(0, 1)],
-        ),
+        # OptimizableModel(
+        #     "TriangleEdgeDeletionModel_True_True",
+        #     lambda p_delete: triangle_edge_deletion.TriangleEdgeDeletionModel(
+        #         p_delete=p_delete, keep_connected=True, deter=True
+        #     ),
+        #     [(0, 1)],
+        # ),
         OptimizableModel(
             "WaxmanModel",
             lambda beta, alpha: waxman.WaxmanModel(beta=beta, alpha=alpha),
@@ -86,7 +86,7 @@ def main():
     ]
 
     optimizers_to_run = [
-        grid_search.GridSearchOptimizer(parameter_interval=0.1),
+        grid_search.GridSearchOptimizer(parameter_interval=0.5),
         differential_evolution.DifferentialEvolutionOptimizer(),
         dual_annealing.DualAnnealingOptimizer(),
     ]
@@ -107,11 +107,41 @@ def main():
         optimizers_to_run, benchmark_orchestrator
     )
 
+    console.print("Processing benchmark results...")
     optimization_results = optimization_orchestrator.optimize_null_models_against_real(
         real_life_model=real_life_model,
         optimizable_models=models_to_optimize,
         seed=SEED,
     )
+    console.print("Benchmark results processed", style="green")
+
+    for optimizable_model, model_opt_result in zip(
+        models_to_optimize, optimization_results
+    ):
+        root_style = "bold bright_blue"
+        real_life_style = "bold yellow"
+        model_style = "bold green"
+        benchmark_style = "bold green"
+
+        tree = Tree(
+            f"==================== {optimizable_model.name} ====================",
+            style=root_style,
+            guide_style=root_style,
+        )
+
+        benchmark_focus_results = model_opt_result.benchmark_focus_results
+        for benchmark, focus_result in zip(benchmarks_to_run, benchmark_focus_results):
+            benchmark_name = benchmark.__class__.__name__
+            benchmark_branch = tree.add(
+                benchmark_name, style=model_style, guide_style=model_style
+            )
+            benchmark_branch.add(f"Best parameters: {focus_result.parameters}")
+            benchmark_branch.add(f"All loss: {focus_result.all_loss}")
+            benchmark_branch.add(
+                f"Focus loss: {focus_result.all_loss[focus_result.focus_index]}"
+            )
+
+        console.print(tree)
 
     with open("optimization_results.pkl", "wb") as outp:
         pickle.dump(optimization_results, outp, pickle.HIGHEST_PROTOCOL)
