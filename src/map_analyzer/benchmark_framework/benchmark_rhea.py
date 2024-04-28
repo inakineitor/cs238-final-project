@@ -3,9 +3,11 @@ from dataclasses import dataclass
 from rich.table import Table
 import pickle
 
+
 import numpy as np
 from gerrychain import Graph
 
+# idk if necessary
 @dataclass
 class GraphData:
     def __init__(self, graph, metadata):
