@@ -84,9 +84,9 @@ class FloodFillModel(GraphGeneratingModel):
         # Init 
         walkers = []
         cdict = {x: 0 for x in grid.nodes()}
-        print(f"Num Walkers: {num_walkers}")
+        # print(f"Num Walkers: {num_walkers}")
         for i in range(num_walkers):
-            print(i)
+            # print(i)
             walker_starting_position = object.choose_random_item()
             walkers.append(walker_starting_position)
             object.remove_item(walker_starting_position)
@@ -112,6 +112,7 @@ class FloodFillModel(GraphGeneratingModel):
             rng.shuffle(order)
 
             for i in order:
+                # potential_moves = list(grid.neighbors(walkers[i]))
                 try:
                     potential_moves = list(grid.neighbors(walkers[i]))
                 except:
@@ -120,14 +121,14 @@ class FloodFillModel(GraphGeneratingModel):
                     [move not in object for move in potential_moves]
                 ):
                     walkers.pop(i)
-                    print(f"Walkers: {len(walkers)}")
+                    # print(f"Walkers: {len(walkers)}")
                     break
                     
                 old = walkers[i]
                 walkers[i] = tuple(rng.choice(potential_moves))
                 if walkers[i] in object:
                     object.remove_item(walkers[i])
-                    print(f"Removal: {len(object)}")
+                    # print(f"Removal: {len(object)}")
                     cdict[walkers[i]] = i + 1
                     grid = nx.contracted_nodes(grid, walkers[i], old, self_loops=False)
                 else:

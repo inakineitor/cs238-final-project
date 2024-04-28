@@ -26,7 +26,7 @@ from map_analyzer.models import (
     # waxman,
 )
 
-NUM_ITERS = 10  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
+NUM_ITERS = 1  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
 SEED = 238  # INFO: Seed to ensure reproducible results
 
 
