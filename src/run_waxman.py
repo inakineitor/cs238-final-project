@@ -22,8 +22,8 @@ from map_analyzer.benchmarks import (
 from map_analyzer.models import (
     real_life_maps,
     # triangle_edge_deletion,
-    flood_fill,
-    # waxman
+    # flood_fill,
+    waxman
 )
 
 NUM_ITERS = 1  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
@@ -44,8 +44,8 @@ def main():
         # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=False),
         # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=True),
         # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=True),
-        flood_fill.FloodFillModel(),
-        # waxman.WaxmanModel(beta=0.4, alpha=0.1),
+        # flood_fill.FloodFillModel(),
+        waxman.WaxmanModel(beta=0.4, alpha=0.1),
         # TODO: Add more models
     ]
 
@@ -121,7 +121,7 @@ def main():
             # print("2")
             random.seed(238)
             # print("3")
-            model = flood_fill.WaxmanModel()
+            model = waxman.WaxmanModel()
             # print("4")
             graph_desired = model.generate_graph(constraints)
             # print("5")
@@ -130,7 +130,7 @@ def main():
             # print("6")
             output_dir.mkdir(parents=True, exist_ok=True)
             # print("7")
-            model_class_name = "FloodFillModel"
+            model_class_name = "WaxmanModel"
             # print("8")
             filename = output_dir / f"{model_class_name}_{map.metadata.state_code}_graph.pkl"
             # print("9")

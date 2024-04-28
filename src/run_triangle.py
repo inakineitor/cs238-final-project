@@ -21,8 +21,8 @@ from map_analyzer.benchmarks import (
 )  # , face_if_planar
 from map_analyzer.models import (
     real_life_maps,
-    # triangle_edge_deletion,
-    flood_fill,
+    triangle_edge_deletion,
+    # flood_fill,
     # waxman
 )
 
@@ -40,11 +40,11 @@ def main():
     console.print("Real life models loaded", style="green")
 
     models_to_test = [
-        # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=False),
-        # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=False),
-        # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=True),
-        # triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=True),
-        flood_fill.FloodFillModel(),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=False),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=False),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=True, deter=True),
+        triangle_edge_deletion.TriangleEdgeDeletionModel(p_delete=0.065, keep_connected=False, deter=True),
+        # flood_fill.FloodFillModel(),
         # waxman.WaxmanModel(beta=0.4, alpha=0.1),
         # TODO: Add more models
     ]
@@ -121,7 +121,7 @@ def main():
             # print("2")
             random.seed(238)
             # print("3")
-            model = flood_fill.WaxmanModel()
+            model = triangle_edge_deletion.TriangleEdgeDeletionModel()
             # print("4")
             graph_desired = model.generate_graph(constraints)
             # print("5")
@@ -130,7 +130,7 @@ def main():
             # print("6")
             output_dir.mkdir(parents=True, exist_ok=True)
             # print("7")
-            model_class_name = "FloodFillModel"
+            model_class_name = "TriangleEdgeDeletionModel"
             # print("8")
             filename = output_dir / f"{model_class_name}_{map.metadata.state_code}_graph.pkl"
             # print("9")
