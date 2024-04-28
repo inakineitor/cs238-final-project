@@ -1,5 +1,6 @@
 import geopandas as gpd
 
+# TRACT LEVEL
 # load the maps
 california_tracts = gpd.read_file('/Users/rheaacharya/Downloads/tl_2010_06_tract10/tl_2010_06_tract10.shp')
 colorado_tracts = gpd.read_file('/Users/rheaacharya/Downloads/tl_2010_08_tract10/tl_2010_08_tract10.shp')
