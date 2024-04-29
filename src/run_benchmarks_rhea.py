@@ -18,7 +18,8 @@ from map_analyzer.benchmarks import (
     assortativity,
     average_degree,
     clustering_coefficient,
-)  # , face_if_planar
+    face_if_planar
+)  
 from map_analyzer.models import (
     real_life_maps,
     # triangle_edge_deletion,
@@ -26,7 +27,7 @@ from map_analyzer.models import (
     # waxman
 )
 
-NUM_ITERS = 1  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
+NUM_ITERS = 10  # INFO: The higher the number of iterations the more accurate the estimates (set to 50 for comparability because we have 50 state maps)
 SEED = 238  # INFO: Seed to ensure reproducible results
 
 
@@ -57,7 +58,7 @@ def main():
         maximum_degree.MaximumDegreeBenchmark(),
         number_of_leaves.NumberOfLeavesBenchmark(),
         radius.RadiusBenchmark(),
-        # face_if_planar.FaceIfPlanarBenchmark()
+        face_if_planar.FaceIfPlanarBenchmark()
     ]
 
     orchestrator = BenchmarkOrchestrator(benchmarks_to_run)
@@ -97,6 +98,10 @@ def main():
             benchmark.__class__.add_benchmark_metrics_to_table(
                 real_life_table, benchmark_name, benchmark_results
             )
+
+            print("TESTING TESTING")
+            print(benchmark_name)
+            print(benchmark_results)
         real_life_branch.add(real_life_table)
 
         for model, benchmarks in zip(models_to_test, model_benchmarks):
@@ -121,7 +126,7 @@ def main():
             # print("2")
             random.seed(238)
             # print("3")
-            model = flood_fill.WaxmanModel()
+            model = flood_fill.FloodFillModel()
             # print("4")
             graph_desired = model.generate_graph(constraints)
             # print("5")

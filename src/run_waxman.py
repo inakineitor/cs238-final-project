@@ -4,6 +4,7 @@ from rich.tree import Tree
 from rich.table import Table
 import pickle
 import random
+import pandas as pd
 
 from map_analyzer.benchmark_framework.benchmark_orchestrator_rhea import (
     BenchmarkOrchestrator,
@@ -62,6 +63,7 @@ def main():
 
     orchestrator = BenchmarkOrchestrator(benchmarks_to_run)
 
+    results = []
     console.print("Processing benchmark results...")
     benchmark_orchestrator_results = orchestrator.benchmark_null_models_against_real(
         real_life_model=real_life_model,
@@ -97,6 +99,9 @@ def main():
             benchmark.__class__.add_benchmark_metrics_to_table(
                 real_life_table, benchmark_name, benchmark_results
             )
+            print("TESTING TESTING")
+            print(benchmark_name)
+            print(benchmark_results)
         real_life_branch.add(real_life_table)
 
         for model, benchmarks in zip(models_to_test, model_benchmarks):
@@ -110,9 +115,19 @@ def main():
                 benchmark.__class__.add_benchmark_metrics_to_table(
                     model_table, benchmark_name, benchmark_results
                 )
+
+                row = {"state": map_metadata.state_code,
+                        "model": model_name,
+                       "benchmark": benchmark_name,
+                       "min": benchmark_results.minimum,
+                       "mean": benchmark_results.mean,
+                       "max":benchmark_results.maximum
+                       }
+                results.append(row)
             model_branch.add(model_table)
-        
         console.print(tree)
+    df = pd.DataFrame(results)
+    df.to_csv("out.csv") 
 
         
 
