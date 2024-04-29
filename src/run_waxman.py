@@ -111,36 +111,6 @@ def main():
                     model_table, benchmark_name, benchmark_results
                 )
             model_branch.add(model_table)
-
-        from map_analyzer.benchmark_framework.model_constraint_generator import generate_constraints_from_graph
-        # print("1")
-        iter = 0
-        for map in real_life_model.get_all_graphs():
-            iter += 1
-            constraints = generate_constraints_from_graph(map.graph)
-            # print("2")
-            random.seed(238)
-            # print("3")
-            model = waxman.WaxmanModel()
-            # print("4")
-            graph_desired = model.generate_graph(constraints)
-            # print("5")
-            # def save_graph_data(graph_data, filename):
-            output_dir = Path("../data/maps")
-            # print("6")
-            output_dir.mkdir(parents=True, exist_ok=True)
-            # print("7")
-            model_class_name = "WaxmanModel"
-            # print("8")
-            filename = output_dir / f"{model_class_name}_{map.metadata.state_code}_graph.pkl"
-            # print("9")
-            with open(filename, 'wb') as f:
-                # print("10")
-                pickle.dump(graph_desired, f)
-
-            with open(filename, 'rb') as f:
-                # print("11")
-                loaded_graph_data = pickle.load(f)
         
         console.print(tree)
 
